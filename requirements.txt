@@ -8,5 +8,6 @@ scipy
 watchdog
 pyyaml
 Pillow
-x-anylabeling
+# x-anylabeling-cvhub must be installed in a separate venv (.venv-xanylabeling)
+# See docs/xanylabeling_integration.md for setup instructions
 importlib_metadata
