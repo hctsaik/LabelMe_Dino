@@ -1,0 +1,12 @@
+torch>=2.0
+torchvision
+transformers>=4.38
+numpy<=1.26.4
+opencv-python==4.11.0.86
+PyQt5
+scipy
+watchdog
+pyyaml
+Pillow
+x-anylabeling
+importlib_metadata

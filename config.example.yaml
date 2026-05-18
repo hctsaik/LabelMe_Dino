@@ -1,0 +1,47 @@
+classes:
+  ear:
+    conf_threshold: 0.6
+    yolo_id: 5
+  eye:
+    conf_threshold: 0.6
+    yolo_id: 6
+  head:
+    conf_threshold: 0.6
+    yolo_id: 11
+  hoar:
+    conf_threshold: 0.6
+    yolo_id: 7
+  left:
+    conf_threshold: 0.6
+    yolo_id: 8
+  mouth:
+    conf_threshold: 0.6
+    yolo_id: 10
+  nose:
+    conf_threshold: 0.6
+    yolo_id: 4
+  red:
+    conf_threshold: 0.6
+    yolo_id: 2
+  right:
+    conf_threshold: 0.6
+    yolo_id: 9
+  white:
+    conf_threshold: 0.6
+    yolo_id: 3
+labelme:
+  exe_path: ''
+  labels_file: ''
+output:
+  dir: output
+propagation:
+  radius_seconds: 3
+  ransac_reproj_threshold: 14
+  top_k_patches: 20
+session:
+  features_subdir: features
+  frames_subdir: frames
+  labels_subdir: labels
+  tmp_dir: tmp
+x_anylabeling:
+  exe_path: ''
