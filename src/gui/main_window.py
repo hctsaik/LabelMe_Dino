@@ -162,7 +162,8 @@ class MainWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("video_annotator")
+        shell_title = os.environ.get("NATIVEAPP_WINDOW_TITLE", "").strip()
+        self.setWindowTitle(shell_title or "video_annotator")
 
         self._cfg = self._load_config()
 
@@ -202,6 +203,13 @@ class MainWindow(QMainWindow):
         self._build_ui()
         self._rebuild_bridges()
         self.right_panel.update_classes(self.class_manager)
+        task_dir = os.environ.get("LABELME_DINO_TASK_DIR", "").strip()
+        if task_dir:
+            try:
+                self.open_task_dir(Path(task_dir))
+            except Exception as exc:
+                logger.exception("Failed to open LABELME_DINO_TASK_DIR")
+                QMessageBox.warning(self, "Task dir", str(exc))
 
     # ------------------------------------------------------------------
     # UI construction
@@ -507,6 +515,31 @@ class MainWindow(QMainWindow):
         self.lbl_status.setText(
             "步驟 2：請在時間軸找到已標註的 frame，然後載入 LabelMe / X-AnyLabeling JSON"
         )
+
+    def open_task_dir(self, task_dir: Path) -> None:
+        """Open a still-image handoff folder produced by the platform adapter."""
+        task_dir = Path(task_dir)
+        frames_dir = task_dir / "frames"
+        self.video_core.release()
+        self.video_core = VideoCore(task_dir)
+        self.propagator = None
+        meta = self.video_core.load_image_sequence(frames_dir)
+        self.timeline.set_video(meta.fps, meta.total_frames, meta.duration)
+        self._show_frame(0)
+        classes = task_dir / "classes.txt"
+        if classes.exists():
+            labels = [ln.strip() for ln in classes.read_text(encoding="utf-8").splitlines() if ln.strip()]
+            for i, label in enumerate(labels):
+                if not self.class_manager.has_label(label):
+                    try:
+                        self.class_manager.add(label, i)
+                    except ValueError:
+                        pass
+            self.right_panel.update_classes(self.class_manager)
+        self.lbl_video_info.setText(
+            f"  task {task_dir.name}   {meta.width}×{meta.height}   {meta.total_frames} images"
+        )
+        self.lbl_status.setText("已載入靜態影像任務。標註後存到 annotations/，平台可讀回 sha256。")
 
     # ------------------------------------------------------------------
     # Load Annotation  →  Preview  →  Confirm & Propagate

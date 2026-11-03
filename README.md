@@ -23,3 +23,9 @@ Or run it through the external runtime:
 The Electron platform starts this tool as an external desktop-window module so
 the PyQt image workflow stays native while the platform tracks readiness,
 runtime diagnostics, logs, and process lifecycle.
+
+殼內 Web 標註（P0，不經 PyQt）：見 [`label_web/README.md`](label_web/README.md)。
+
+```bat
+python -m label_web --host 127.0.0.1 --port 8789 --root <lv_handoff_dir>
+```

@@ -52,6 +52,31 @@ class VideoCore:
         self.meta = VideoMeta(fps, width, height, total_frames, duration)
         return self.meta
 
+    def load_image_sequence(self, frames_dir: str | Path | None = None) -> VideoMeta:
+        """Optional still-image task: use existing frame_XXXXXX files, no video.
+
+        Independent video import is unchanged. Missing --task-dir keeps original behaviour.
+        """
+        if frames_dir is not None:
+            self.frames_dir = Path(frames_dir)
+            self.frames_dir.mkdir(parents=True, exist_ok=True)
+            self.session_dir = self.frames_dir.parent
+            self.features_dir = self.session_dir / "features"
+            self.features_dir.mkdir(parents=True, exist_ok=True)
+
+        frames = sorted(self.frames_dir.glob("frame_*.jpg")) + sorted(self.frames_dir.glob("frame_*.png"))
+        if not frames:
+            raise ValueError(f"No frame_*.jpg/png in {self.frames_dir}")
+        sample = cv2.imread(str(frames[0]))
+        if sample is None:
+            raise ValueError(f"Cannot read {frames[0]}")
+        height, width = sample.shape[:2]
+        total = len(frames)
+        self.video_path = None
+        self._cap = None
+        self.meta = VideoMeta(fps=1.0, width=width, height=height, total_frames=total, duration=float(total))
+        return self.meta
+
     # ------------------------------------------------------------------
     # Time / frame index helpers
     # ------------------------------------------------------------------

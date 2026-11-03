@@ -56,14 +56,19 @@ def _exception_hook(exc_type, exc_value, exc_tb):
     sys.__excepthook__(exc_type, exc_value, exc_tb)
 
 
-def _parse_runtime_args(argv: list[str]) -> tuple[list[str], Path | None]:
+def _parse_runtime_args(argv: list[str]) -> tuple[list[str], Path | None, Path | None]:
     cleaned = [argv[0]]
     ready_file: Path | None = None
+    task_dir: Path | None = None
     i = 1
     while i < len(argv):
         arg = argv[i]
         if arg == "--ready-file" and i + 1 < len(argv):
             ready_file = Path(argv[i + 1])
+            i += 2
+            continue
+        if arg == "--task-dir" and i + 1 < len(argv):
+            task_dir = Path(argv[i + 1])
             i += 2
             continue
         cleaned.append(arg)
@@ -72,7 +77,10 @@ def _parse_runtime_args(argv: list[str]) -> tuple[list[str], Path | None]:
     env_ready_file = os.environ.get("LABELME_DINO_READY_FILE", "").strip()
     if ready_file is None and env_ready_file:
         ready_file = Path(env_ready_file)
-    return cleaned, ready_file
+    env_task_dir = os.environ.get("LABELME_DINO_TASK_DIR", "").strip()
+    if task_dir is None and env_task_dir:
+        task_dir = Path(env_task_dir)
+    return cleaned, ready_file, task_dir
 
 
 def _write_ready_file(path: Path, log_file: Path) -> None:
@@ -90,11 +98,13 @@ def _write_ready_file(path: Path, log_file: Path) -> None:
 
 
 def main():
-    qt_argv, ready_file = _parse_runtime_args(sys.argv)
+    qt_argv, ready_file, task_dir = _parse_runtime_args(sys.argv)
     log_file = _setup_logging()
     sys.excepthook = _exception_hook
     logging.info("=== video_annotator started ===")
     logging.info("Log file: %s", log_file)
+    if task_dir is not None:
+        os.environ["LABELME_DINO_TASK_DIR"] = str(task_dir)
 
     app = QApplication(qt_argv)
     window = MainWindow()

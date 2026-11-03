@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>標註</title>
+  <link rel="stylesheet" href="/static/styles.css?v=empty1" />
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="brand">標註</div>
+      <span id="meta"></span>
+    </header>
+    <div class="workspace">
+      <aside id="queue" aria-label="圖片清單"></aside>
+      <section class="stage">
+        <div id="empty" class="empty">
+          <h1>還沒有要標的圖</h1>
+          <p>這不是示範 App，不會預載任何櫃子或測試照片。請選本機資料夾，或抽一段影片的幀。</p>
+          <div class="empty-actions">
+            <button id="open-folder" type="button">開啟圖片資料夾</button>
+            <button id="open-video" type="button">選擇影片並抽幀</button>
+          </div>
+        </div>
+        <div id="stage-wrap" hidden>
+          <canvas id="cv"></canvas>
+        </div>
+        <div id="cands" hidden></div>
+      </section>
+      <aside class="inspector">
+        <label>類別
+          <select id="cls"></select>
+        </label>
+        <div class="row">
+          <button id="prev" type="button">上一張</button>
+          <button id="next" type="button">下一張</button>
+        </div>
+        <button id="save" type="button">儲存</button>
+        <button id="del" type="button">刪最後一框</button>
+        <button id="sam" type="button">分割此框</button>
+        <button id="propagate" type="button">傳播到鄰近幀</button>
+        <p class="hint">在圖上拖曳畫框。框座標是原圖像素。按儲存才寫入本機 JSON。</p>
+      </aside>
+    </div>
+    <section class="video-bar">
+      <span class="vlabel">影片</span>
+      <input id="video-path" type="text" placeholder="貼上本機 .mp4 完整路徑後按抽幀" />
+      <label>起秒 <input id="t0" type="number" value="0" step="0.5" /></label>
+      <label>迄秒 <input id="t1" type="number" value="2" step="0.5" /></label>
+      <button id="prepare" type="button">抽幀</button>
+      <span id="job"></span>
+    </section>
+  </div>
+  <script src="/static/app.js?v=empty1"></script>
+</body>
+</html>

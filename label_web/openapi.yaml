@@ -1,0 +1,42 @@
+openapi: 3.0.3
+info:
+  title: Label Web P0
+  version: 0.1.0
+servers:
+  - url: http://127.0.0.1:{port}
+    variables:
+      port:
+        default: "8789"
+paths:
+  /health:
+    get:
+      summary: Process is alive. model_ready may be false.
+      responses:
+        "200":
+          description: ok
+  /api/task:
+    get:
+      summary: Classes and image list
+  /api/image/{index}:
+    get:
+      summary: Binary image
+  /api/annotation/{index}:
+    get:
+      summary: LabelMe JSON
+    post:
+      summary: Save boxes next to the image
+  /api/open:
+    post:
+      summary: Switch LABEL_WEB_TASK_DIR equivalent without restart
+  /api/jobs/prepare_video:
+    post:
+      summary: P1 stub
+      responses:
+        "501":
+          description: not implemented
+  /api/jobs/propagate:
+    post:
+      summary: P2 stub
+      responses:
+        "501":
+          description: not implemented
